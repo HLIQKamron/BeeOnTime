@@ -1,0 +1,83 @@
+definitions:
+  http.Response:
+    properties:
+      data:
+        type: object
+      description:
+        type: string
+      status:
+        type: string
+    type: object
+  models.Staff:
+    properties:
+      blocked:
+        type: boolean
+      blockedAt:
+        type: string
+      branchName:
+        type: string
+      email:
+        type: string
+      lastname:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: this returns "pong" messsage to show service is working
+      operationId: ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: returns "pong" message
+  /staffs:
+    post:
+      consumes:
+      - application/json
+      description: Create staff
+      operationId: create-staff
+      parameters:
+      - description: Staff
+        in: body
+        name: staff
+        required: true
+        schema:
+          $ref: '#/definitions/models.Staff'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response body
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Staff'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create staff
+swagger: "2.0"
