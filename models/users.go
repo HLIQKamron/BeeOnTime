@@ -11,4 +11,16 @@ type Staff struct {
 	Blocked    bool
 	BlockedAt  string
 	CreatedAt  string
+	UpdatedAt  string
+}
+type GetStaffs struct {
+	Limit int
+	Page  int
+}
+
+type Entry struct {
+	StaffId      string `json:"staff_id"`
+	ActivityType string `json:"activity_type"`
+	Date         string `json:"date"`
+	City         string `json:"city"`
 }
