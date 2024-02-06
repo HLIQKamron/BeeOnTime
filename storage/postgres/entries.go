@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/BeeOntime/models"
 	"github.com/google/uuid"
@@ -34,8 +33,21 @@ func (s *postgresRepo) CreateStaffEntry(ctx context.Context, req models.Entry) (
 }
 func (s *postgresRepo) GetStaffEntries(ctx context.Context, req models.GetStaffEntries) (models.GetEntryResponse, error) {
 	var res []models.Entry
-	query := s.Db.Builder.Select("id,staff_id,activity_type,city,(select count(*) from entries) as count,created_at").From("entries").Where(`(staff_id = $1 or $1 = '')
-	and (id = $2 or $2 = '')`, req.StaffID, req.Id, )
+
+	where := `(staff_id = $1 or $1 = '')
+		and (id = $2 or $2 = '')
+		and (case 
+				when $3 = '' then true
+				else created_at >= $3::timestamp
+			end)
+		and (
+				case
+					when $4 = '' then true
+					else created_at <= $4::timestamp
+				end
+		    )`
+
+	query := s.Db.Builder.Select("id,staff_id,activity_type,city,(select count(*) from entries) as count,created_at").From("entries").Where(where, req.StaffID, req.Id, req.From, req.To)
 
 	query = query.Limit(uint64(req.Limit)).Offset(uint64((req.Page - 1) * req.Limit))
 
@@ -81,7 +93,8 @@ func (s *postgresRepo) UpdateStaffEntry(ctx context.Context, req models.Entry) e
 	mp["activity_type"] = req.ActivityType
 	mp["city"] = req.City
 	mp["staff_id"] = req.StaffId
-	mp["updated_at"] = time.Now().Format(time.RFC3339)
+	mp["created_at"] = req.Date
+	// mp["updated_at"] = time.Now().Format(time.RFC3339)
 
 	query := s.Db.Builder.Update("entries").SetMap(mp).Where("id = ?", req.Id)
 	_, err := query.RunWith(s.Db.Db).Exec()
