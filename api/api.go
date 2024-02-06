@@ -52,6 +52,7 @@ func SetUpAPI(cfg config.Config, strg storage.StorageI) *gin.Engine {
 
 	//leaves
 	api.POST("/staff/leave", h.CreateStaffLeave)
+	api.GET("/staff/leave", h.GetStaffLeaves)
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))

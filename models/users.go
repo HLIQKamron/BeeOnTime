@@ -32,6 +32,10 @@ type Entry struct {
 	UpdatedAt    string `json:"updated_at"`
 }
 
+type StaffLeaveList struct {
+	Count int `json:"count"`
+	Leave []LeaveRequest `json:"leave"`
+}
 type LeaveRequest struct {
 	Id           string `json:"id"`
 	StaffId      string `json:"staff_id"`
@@ -53,4 +57,12 @@ type GetStaffEntries struct {
 	Page    int
 	From    string
 	To      string
+}
+type GetStaffLeavesRequest struct {
+	StaffID string
+	Limit   int
+	Page    int
+	From    string
+	To      string
+	Id      string
 }
