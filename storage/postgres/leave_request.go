@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/BeeOntime/models"
@@ -40,12 +39,24 @@ func (s *postgresRepo) CreateLeaveRequest(ctx context.Context, req models.LeaveR
 }
 func (s *postgresRepo) GetStaffLeaves(ctx context.Context, req models.GetStaffLeavesRequest) (models.StaffLeaveList, error) {
 
-	fmt.Println("req", req)
-	var res models.StaffLeaveList
+	var (
+		res   models.StaffLeaveList
+		count int
+	)
 	where := `(staff_id = $1 or $1 = '')
-		and (id = $2 or $2 = '')`
+		and (id = $2 or $2 = '')
+		and (case 
+			when $3 = '' then true
+			else created_at >= $3::timestamp
+		end)
+	and (
+			case
+				when $4 = '' then true
+				else created_at <= $4::timestamp
+			end
+		)`
 
-	query := s.Db.Builder.Select(`id,staff_id,reason,read,read_time,created_at,updated_at,approved,approved_time`).From("leave_request").Where(where, req.StaffID, req.Id)
+	query := s.Db.Builder.Select(`id,staff_id,reason,read,read_time,created_at,updated_at,approved,approved_time`).From("leave_request").Where(where, req.StaffID, req.Id, req.From, req.To)
 
 	query = query.Limit(uint64(req.Limit)).Offset(uint64((req.Page - 1) * req.Limit))
 
@@ -57,7 +68,7 @@ func (s *postgresRepo) GetStaffLeaves(ctx context.Context, req models.GetStaffLe
 	defer rows.Close()
 	for rows.Next() {
 		leave := models.LeaveRequest{}
-		var readTime,approvedTime sql.NullString
+		var readTime, approvedTime sql.NullString
 		err := rows.Scan(
 			&leave.Id,
 			&leave.StaffId,
@@ -77,5 +88,12 @@ func (s *postgresRepo) GetStaffLeaves(ctx context.Context, req models.GetStaffLe
 		res.Leave = append(res.Leave, leave)
 	}
 
+	query = s.Db.Builder.Select("count(*) ").From("leave_request").Where(where, req.StaffID, req.Id, req.From, req.To)
+	err = query.RunWith(s.Db.Db).Scan(&count)
+	if err != nil {
+		log.Println("err", err)
+		return res, err
+	}
+	res.Count = count
 	return res, nil
 }
