@@ -130,9 +130,10 @@ func (s *postgresRepo) UpdateStaff(ctx context.Context, req models.Staff) (model
 	mp["password"] = req.Password
 	mp["updated_at"] = time.Now()
 
-	if req.Id != "" {
-		whereCondition = append(whereCondition, squirrel.Eq{"id": req.Id})
+	if req.Id == "" {
+		return models.Staff{}, fmt.Errorf("id is required")
 	}
+	whereCondition = append(whereCondition, squirrel.Eq{"id": req.Id})
 
 	query := s.Db.Builder.Update("staff").SetMap(mp).
 		Where(whereCondition).

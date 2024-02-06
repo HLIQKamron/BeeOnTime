@@ -21,6 +21,7 @@ type PostgresI interface {
 
 	CreateLeaveRequest(ctx context.Context, req models.LeaveRequest) (models.LeaveRequest, error)
 	GetStaffLeaves(ctx context.Context, req models.GetStaffLeavesRequest) (models.StaffLeaveList, error)
+	UpdateLeaveRequest(ctx context.Context, req models.LeaveRequest) (models.LeaveRequest, error)
 
 	// Don't delete this line, it is used to modify the file automatically
 }

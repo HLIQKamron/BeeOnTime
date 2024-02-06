@@ -71,7 +71,7 @@ func (h *handlerV1) GetStaffLeaves(c *gin.Context) {
 			return
 		}
 		pageInt = int(pageInt)
-	}else{
+	} else {
 		pageInt = 1
 	}
 	res, err := h.storage.Postgres().GetStaffLeaves(c, models.GetStaffLeavesRequest{
@@ -87,4 +87,28 @@ func (h *handlerV1) GetStaffLeaves(c *gin.Context) {
 		return
 	}
 	c.JSON(200, res)
+}
+
+// UpdateStaffLeave godoc
+// @Summary Update staff leave
+// @Description Update staff leave
+// @Tags staff
+// @Accept  json
+// @Produce  json
+// @Param leave body models.LeaveRequest true "Leave object"
+// @Success 200 {object} models.LeaveRequest
+// @Router /staff/leave [put]
+func (h *handlerV1) UpdateStaffLeave(c *gin.Context) {
+	var req models.LeaveRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	resp, err := h.storage.Postgres().UpdateLeaveRequest(c, req)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"message": "updated",
+		"response": resp})
 }
