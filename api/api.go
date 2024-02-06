@@ -5,11 +5,10 @@ import (
 	"github.com/BeeOntime/api/handlers"
 	"github.com/BeeOntime/config"
 	"github.com/BeeOntime/storage"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/gin-contrib/cors"
-
 	// swaggerFiles "github.com/swaggo/files"
 )
 
@@ -44,6 +43,15 @@ func SetUpAPI(cfg config.Config, strg storage.StorageI) *gin.Engine {
 	api.GET("/staffs", h.GetStaffs)
 	api.DELETE("/staff/:id", h.DeleteStaff)
 	api.PUT("/staff", h.UpdateStaff)
+
+	//entry points
+	api.POST("/staff/entry", h.CreateStaffEntry)
+	api.GET("/staff/entry", h.GetStaffEntries)
+	api.DELETE("/staff/entry/:id", h.DeleteStaffEntry)
+	api.PUT("/staff/entry", h.UpdateStaffEntry)
+
+	//leaves
+	api.POST("/staff/leave", h.CreateStaffLeave)
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))

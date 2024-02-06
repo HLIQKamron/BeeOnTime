@@ -18,9 +18,39 @@ type GetStaffs struct {
 	Page  int
 }
 
+type GetEntryResponse struct {
+	Entry []Entry `json:"entry"`
+	Count int     `json:"count"`
+}
+
 type Entry struct {
+	Id           string `json:"id"`
 	StaffId      string `json:"staff_id"`
 	ActivityType string `json:"activity_type"`
 	Date         string `json:"date"`
 	City         string `json:"city"`
+	UpdatedAt    string `json:"updated_at"`
+}
+
+type LeaveRequest struct {
+	Id           string `json:"id"`
+	StaffId      string `json:"staff_id"`
+	Reason       string `json:"reason"`
+	Read         bool   `json:"read"`
+	CreatedAt    string `json:"created_at"`
+	LeaveDate    string `json:"leave_date"`
+	Approved     bool   `json:"approved"`
+	ApprovedAt   string `json:"approved_at"`
+	UpdatedAt    string `json:"updated_at"`
+	ReadTime     string `json:"read_time"`
+	ApprovedTime string `json:"approved_time"`
+}
+type GetStaffEntries struct {
+	Id      string
+	StaffID string
+	Date    string
+	Limit   int
+	Page    int
+	From    string
+	To      string
 }
