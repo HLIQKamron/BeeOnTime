@@ -23,5 +23,13 @@ type PostgresI interface {
 	GetStaffLeaves(ctx context.Context, req models.GetStaffLeavesRequest) (models.StaffLeaveList, error)
 	UpdateLeaveRequest(ctx context.Context, req models.LeaveRequest) (models.LeaveRequest, error)
 
+	//hr
+	CreateHr(ctx context.Context, req models.Hr) (models.Hr, error)
+	GetHrs(ctx context.Context, req models.GetHrs) ([]models.Hr, error)
+	DeleteHr(ctx context.Context, id string) error
+
+	//Auth
+	LoginCheck(ctx context.Context, username string, password string) (string, error)
+
 	// Don't delete this line, it is used to modify the file automatically
 }

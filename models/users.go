@@ -33,7 +33,7 @@ type Entry struct {
 }
 
 type StaffLeaveList struct {
-	Count int `json:"count"`
+	Count int            `json:"count"`
 	Leave []LeaveRequest `json:"leave"`
 }
 type LeaveRequest struct {
@@ -65,4 +65,19 @@ type GetStaffLeavesRequest struct {
 	From    string
 	To      string
 	Id      string
+}
+
+type Hr struct {
+	Id        string `json:"id"`
+	Login     string `json:"login"`
+	Password  string `json:"password"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+type GetHrs struct {
+	Id string `json:"id"`
+}
+type Login struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }

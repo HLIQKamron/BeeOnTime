@@ -5,6 +5,7 @@ import (
 
 	"github.com/BeeOntime/models"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Staffs
@@ -32,7 +33,7 @@ func (h *handlerV1) CreateStaff(c *gin.Context) {
 	isTheStaffExist, err := h.storage.Postgres().GetByLogin(c.Request.Context(), req.Email)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"message": "server error : " + err.Error()})
+			"message": err.Error()})
 		return
 	}
 	if isTheStaffExist.Email != "" {
@@ -40,6 +41,14 @@ func (h *handlerV1) CreateStaff(c *gin.Context) {
 			"message": "staff already exist"})
 		return
 	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "server error"})
+		return
+	}
+	req.Password = string(hashedPassword)
 
 	resp, err := h.storage.Postgres().CreateStaff(c.Request.Context(), req)
 	if err != nil {

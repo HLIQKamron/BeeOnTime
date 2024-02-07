@@ -57,6 +57,9 @@ func (s *postgresRepo) GetByLogin(ctx context.Context, login string) (models.Sta
 		// &res.CreatedAt,
 	)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return res, nil
+		}
 		return res, err
 	}
 	return res, nil

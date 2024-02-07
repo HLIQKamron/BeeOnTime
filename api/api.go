@@ -36,7 +36,11 @@ func SetUpAPI(cfg config.Config, strg storage.StorageI) *gin.Engine {
 	r.Use(cors.New(corsConfig))
 	api := r.Group("/v1")
 
+	api.Use(h.JwtAuthMiddleware())
+
 	api.GET("/ping", h.Ping)
+
+	api.POST("/login", h.Login)
 
 	// //staffs
 	api.POST("/staff", h.CreateStaff)
@@ -54,6 +58,12 @@ func SetUpAPI(cfg config.Config, strg storage.StorageI) *gin.Engine {
 	api.POST("/staff/leave", h.CreateStaffLeave)
 	api.GET("/staff/leave", h.GetStaffLeaves)
 	api.PUT("/staff/leave", h.UpdateStaffLeave)
+
+	//hr
+	api.POST("/hr", h.CreateHr)
+	api.GET("/hr", h.GetHrs)
+	api.DELETE("/hr/:id",h.DeleteHr)
+	
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
